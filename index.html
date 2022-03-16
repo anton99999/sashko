@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HOHOHOL</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <style>
+            *{margin: 0;padding: 0;}
+            
+            body{
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            header{
+
+                height: 100%;
+            }
+            main{
+                display: flex;
+                justify-content: center;
+                flex: 1;
+            }
+            footer{
+
+                height: 100%;
+            }
+            h1, h3{
+                font-family: sans-serif;
+                cursor: pointer;
+                user-select: none;
+            }
+            div{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            img{
+                height: 500px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <header></header>
+        <main>
+            <div>
+                <img src="idle.png" alt="person">
+                <h1>нажми</h1>
+                <h3>гучність: 0</h3>
+            </div>
+        </main>
+        <footer></footer>
+
+        
+
+
+        <script>
+
+            var context  
+            var analyser
+            var ttt
+
+            var array = new Uint8Array(1)  
+            var speed = 10
+            var say   = ['no', 'yes'] // ,'eee', 'hohoho'
+            var ok    = true 
+            var sound = new Audio;
+             
+            
+
+            
+            $('body').click(function(){
+
+                if(context) return;
+
+                context = new AudioContext(); 
+                analyser = context.createAnalyser();
+
+                navigator.mediaDevices.getUserMedia({
+                    audio: true
+                }).then(stream => {
+                    src = context.createMediaStreamSource(stream);
+                    src.connect(analyser);
+                    ttt = setInterval(interval, 1000/speed)
+                }).catch(error => {
+                    alert(error + '\r\n\ Отклонено. Страница будет обновлена!');
+                    location.reload();
+                });
+                console.log(analyser)
+            })
+
+            function interval(){
+
+                analyser.getByteFrequencyData(array);
+                vol = array[0];
+
+                if (vol > 25){
+                    $('h1').text('слухає ')
+                    $('img').attr('src', 'idle.png')
+                    speed = 4
+                    clearInterval(ttt)
+                    ttt = setInterval(interval, 1000/speed)
+                    ok  = true
+                }
+                else{
+                    hhh()
+                }
+              
+                console.log(speed)
+                $('h3').text('гучність: ' + vol)
+            }
+          
+            
+
+            function hhh(){
+              if(ok){
+                word = say[Math.floor(Math.random() * say.length)]
+                $('h1').text(word)
+                if(word == 'yes'){
+                    setTimeout(function(){$('img').attr('src', 'd.png')}, 0);
+                    setTimeout(()=>{$('img').attr('src', 'a.png')}, 300);
+                    setTimeout(()=>{$('img').attr('src', 'idle.png')}, 600);
+                    sound.src = "da.mp3";
+                    sound.currentTime = 0;
+                    sound.play();
+                }
+                if(word == 'no'){
+                    setTimeout(()=>{$('img').attr('src', 'n.png')}, 0);
+                    setTimeout(()=>{$('img').attr('src', 'e.png')}, 300);
+                    setTimeout(()=>{$('img').attr('src', 'idle.png')}, 600);
+                    sound.src = "ne.mp3";
+                    sound.currentTime = 0;
+                    sound.play(); 
+                }
+                speed = 10
+                clearInterval(ttt)
+                ttt = setInterval(interval, 1000/speed)
+                ok    = false
+                
+              }
+            }
+            
+        </script>
+    </body>
+</html>
